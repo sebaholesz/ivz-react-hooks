@@ -1,45 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 function App() {
-  const [posts, setPosts] = useState(undefined);
-  const [arePostsVisible, setPostVisibility] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(10);
-  const [borderWidth, setBorderWidth] = useState(0);
-
-  const postsHash = useMemo(() => {
-    const hashSymbol = visibleCount > 50 ? 'aoisdnoea' : 'a6s5d1a68d4';
-
-    if (posts === undefined) {
-      return '';
-    }
-
-    return JSON.stringify(posts).slice(50, 75) + hashSymbol;
-  }, [posts, visibleCount]);
-
-  const fetchPosts = useCallback(() => {
-    fetch('https://jsonplaceholder.typicode.com/posts').then((response) =>
-      response.json().then((jsonBody) => setPosts(jsonBody))
-    );
-  }, []);
-
-  useEffect(() => {
-    setBorderWidth(visibleCount / 10);
-  }, [visibleCount]);
-
-  useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
-
   return (
     <>
-      <HashDisplay hash={postsHash} />
-      <button
-        onClick={() =>
-          setPostVisibility((currentVisibility) => !currentVisibility)
-        }
-      >
-        {arePostsVisible ? 'Skrýt' : 'Zobrazit'}
-      </button>
       <div
         style={{
           width: '100vw',
@@ -47,25 +10,7 @@ function App() {
           display: 'flex',
           justifyContent: 'center',
         }}
-      >
-        {arePostsVisible && (
-          <Posts
-            posts={posts}
-            visibleCount={visibleCount}
-            borderWidth={borderWidth}
-          />
-        )}
-      </div>
-      {arePostsVisible && (
-        <button
-          disabled={posts === undefined || visibleCount === posts.length}
-          onClick={() =>
-            setVisibleCount((currentVisibleCount) => currentVisibleCount + 10)
-          }
-        >
-          Zobrazit více
-        </button>
-      )}
+      ></div>
     </>
   );
 }
@@ -73,14 +18,8 @@ function App() {
 export default App;
 
 function Posts({ posts, visibleCount, borderWidth }) {
-  const wrapperRef = useRef(null);
-
-  useEffect(() => {
-    wrapperRef.current.style.border = `${borderWidth}px solid green`;
-  }, [borderWidth]);
-
   return (
-    <div style={{ width: '85%' }} ref={wrapperRef}>
+    <div style={{ width: '85%' }}>
       {posts &&
         posts.slice(0, visibleCount).map((post) => (
           <div
@@ -106,10 +45,6 @@ function Posts({ posts, visibleCount, borderWidth }) {
 }
 
 function HashDisplay({ hash }) {
-  useEffect(() => {
-    alert('Hash se změnil');
-  }, [hash]);
-
   return (
     <div style={{ width: '100%' }}>
       <h2>{hash}</h2>
